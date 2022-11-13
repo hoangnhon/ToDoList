@@ -4,6 +4,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    android:background="#f5ecf4"
     tools:context=".NewToDo">
 
     <EditText
@@ -11,7 +12,7 @@
         android:layout_width="300dp"
         android:layout_height="45dp"
         android:layout_marginStart="10dp"
-        android:layout_marginTop="63dp"
+        android:layout_marginTop="40dp"
         android:ems="10"
         android:hint="タイトルを入力して下さい"
         android:inputType="textPersonName"
@@ -22,8 +23,9 @@
         android:id="@+id/clearBtn_1"
         android:layout_width="80dp"
         android:layout_height="45dp"
-        android:layout_marginTop="63dp"
+        android:layout_marginTop="40dp"
         android:layout_marginEnd="5dp"
+        android:backgroundTint="#d04f97"
         android:text="クリア"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
@@ -34,6 +36,7 @@
         android:layout_height="45dp"
         android:layout_marginTop="10dp"
         android:layout_marginEnd="5dp"
+        android:backgroundTint="#d04f97"
         android:text="クリア"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/clearBtn_1" />
@@ -55,11 +58,14 @@
         android:id="@+id/addImageBtn"
         android:layout_width="56dp"
         android:layout_height="56dp"
-        android:layout_marginStart="10dp"
+        android:layout_marginStart="114dp"
+        android:layout_marginEnd="114dp"
         android:layout_marginBottom="6dp"
         android:clickable="true"
+        app:backgroundTint="#d04f97"
         app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toStartOf="@+id/confirmBtn"
+        app:layout_constraintStart_toEndOf="@+id/cancelBtn"
         app:srcCompat="@android:drawable/ic_menu_camera" />
 
     <ImageView
@@ -81,8 +87,30 @@
         android:layout_marginEnd="5dp"
         android:layout_marginBottom="6dp"
         android:clickable="true"
+        app:backgroundTint="#d04f97"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:srcCompat="@android:drawable/ic_menu_send" />
+
+    <TextView
+        android:id="@+id/titleView"
+        android:layout_width="300dp"
+        android:layout_height="45dp"
+        android:layout_marginStart="10dp"
+        android:layout_marginTop="40dp"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
+
+    <com.google.android.material.floatingactionbutton.FloatingActionButton
+        android:id="@+id/cancelBtn"
+        android:layout_width="56dp"
+        android:layout_height="56dp"
+        android:layout_marginStart="10dp"
+        android:layout_marginBottom="4dp"
+        android:backgroundTint="#d04f97"
+        android:clickable="true"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:srcCompat="@android:drawable/ic_menu_revert" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>
