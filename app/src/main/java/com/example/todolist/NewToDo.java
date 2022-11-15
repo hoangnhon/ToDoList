@@ -4,7 +4,9 @@ import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
 
 import android.content.ContentValues;
+import android.content.Context;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.net.Uri;
 import android.os.Bundle;
 import android.provider.MediaStore;
@@ -12,13 +14,13 @@ import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageView;
-import android.widget.TextView;
-import android.widget.Toast;
 
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 
 import java.text.SimpleDateFormat;
 import java.util.Date;
+import java.util.Map;
+import java.util.Objects;
 
 public class NewToDo extends AppCompatActivity {
     //クラス変数
@@ -28,6 +30,31 @@ public class NewToDo extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_new_to_do);
+
+//        ListAdapter list = new ListAdapter();
+        SaveTitle saveTitle = new SaveTitle();
+        SaveContent saveContent = new SaveContent();
+        SaveImage saveImage = new SaveImage();
+
+//        //設定ファイルのオブジェクト生成
+//        SharedPreferences pref_content= getPreferences(Context.MODE_PRIVATE);
+//        SharedPreferences.Editor editor_content = pref_content.edit();
+
+//        pref_content.edit().clear().commit();
+
+//        Map<String, ?> map_content = pref_content.getAll();
+//        ListAdapter.Content_List.addAll(map_content.keySet());
+//        System.out.println("Content_List"+ListAdapter.Content_List);
+
+        //遷移先
+        Intent GoCamera = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
+        Intent GoSpecific = new Intent(getApplicationContext(),SpecificActivity.class);
+
+        //呼び元
+        Intent fromToDoList = getIntent();
+        Intent fromSpecific = getIntent();
+        String check1 = fromToDoList.getStringExtra("fromToDoList_check");
+        String check2 = fromSpecific.getStringExtra("fromSpecific_check");
 
         //画面上のパーツ宣言
         EditText titleText = findViewById(R.id.titleText);
@@ -39,22 +66,18 @@ public class NewToDo extends AppCompatActivity {
         FloatingActionButton cancelBtn = findViewById(R.id.cancelBtn);
 
         //ToDoListにより画面が立ち上げた場合
-        Intent fromToDoList = getIntent();
-        int check1 = fromToDoList.getIntExtra("fromToDoList_check",0);
-        if (check1 != 0) {
+        if (Objects.equals(check1,"fromToDoList_check")){
             //titleを変換する
             setTitle("新規作成");
         }
         //specificにより画面が立ち上げた場合
-        Intent fromSpecific = getIntent();
-        int check2 = fromSpecific.getIntExtra("fromSpecific_check",0);
-        if (check2 != 0){
+        if (Objects.equals(check2, "fromSpecific_check")){
             //titleを変換する
             setTitle("編集");
-            String Title = fromSpecific.getStringExtra("title");
-            String content = fromSpecific.getStringExtra("content");
-            titleText.setText(Title);
-            contentText.setText(content);
+            //String Title = fromSpecific.getStringExtra("title");
+            //String content = fromSpecific.getStringExtra("content");
+            titleText.setText(ListAdapter.TitleList.get(ListAdapter.position));
+            contentText.setText(ListAdapter.Content_List.get(ListAdapter.position));
         }
         //タイトルクリアボタンを押すとタイトルボックスの文字が消える
         titleClear.setOnClickListener(new View.OnClickListener() {
@@ -74,7 +97,6 @@ public class NewToDo extends AppCompatActivity {
         addImageBtn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Intent GoCamera = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
                 //ユニックな画像ファイル名を生成する
                 String timestamp = new SimpleDateFormat("yyyyMMdd_HHmmss").format(new Date());
                 String filename = "Image" + timestamp + "_.jpg";
@@ -86,7 +108,6 @@ public class NewToDo extends AppCompatActivity {
                 imageUri = getContentResolver().insert(MediaStore.Images.Media.EXTERNAL_CONTENT_URI,values);
                 //カメラ起動のintent にパラメータをセットする
                 GoCamera.putExtra(MediaStore.EXTRA_OUTPUT,imageUri);
-
                 startActivityForResult(GoCamera,CAMERA_RESULT);
             }
         });
@@ -94,17 +115,18 @@ public class NewToDo extends AppCompatActivity {
         confirmBtn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Intent intent_TodoView = new Intent(getApplicationContext(),ToDoList.class);
-                intent_TodoView.putExtra("check",10);
-                intent_TodoView.putExtra("title",titleText.getText().toString());
-                intent_TodoView.putExtra("content",contentText.getText().toString() == null ? "null": contentText.getText().toString());
-                if (imageUri != null){
-                    intent_TodoView.putExtra("imageUri",imageUri.toString());
-                }else {
-                    intent_TodoView.putExtra("imageUri","null");
-                }
+//                list.addContent(contentText.getText().toString());
+//                editor_content.putString(titleText.getText().toString(),contentText.getText().toString()).apply();
+//                System.out.println("Content_List"+ListAdapter.Content_List);
+//                saveTitle.save(titleText.getText().toString());
+//                saveContent.save(contentText.getText().toString());
+//                saveImage.save(imageUri.toString());
 
-                startActivity(intent_TodoView);
+                GoSpecific.putExtra("check_fromNewToDo","fromNewToDo");
+                GoSpecific.putExtra("title",titleText.getText().toString());
+                GoSpecific.putExtra("content", contentText.getText() == null ? "null": contentText.getText().toString());
+                GoSpecific.putExtra("imageUri",imageUri == null? "null": imageUri.toString());
+                startActivity(GoSpecific);
             }
         });
         //cancelボタンを押した時前の画面に戻る
