@@ -3,18 +3,14 @@ package com.example.todolist;
 import androidx.appcompat.app.AppCompatActivity;
 
 import android.content.Intent;
-import android.content.SharedPreferences;
 import android.net.Uri;
 import android.os.Bundle;
 import android.view.View;
 import android.widget.Button;
-import android.widget.CheckBox;
 import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
-
-import java.util.List;
 
 public class SpecificActivity extends AppCompatActivity {
 
@@ -22,6 +18,10 @@ public class SpecificActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_specific);
+
+        String title, content , imageStr;
+        Uri imageUri;
+        Message msg = new Message();
 
         //画面上のパーツ宣言
         Button completeBtn = findViewById(R.id.complete);
@@ -32,26 +32,28 @@ public class SpecificActivity extends AppCompatActivity {
 
         //呼び元
         Intent fromToDoList = getIntent();
-        String Title = fromToDoList.getStringExtra("title");
-        String Content = fromToDoList.getStringExtra("content");
-        Uri imageUri = null;
-        if (fromToDoList.getStringExtra("imageUri") != "null"){
-            String image = fromToDoList.getStringExtra("imageUri");
-            imageUri = Uri.parse(image);
+        //遷移先
+        Intent GotoNewToDo = new Intent(getApplicationContext(),NewToDo.class);
+        Intent GotoToDoList = new Intent(getApplicationContext(),ToDoList.class);
+
+        title = fromToDoList.getStringExtra(msg.ttl_Str);
+        content = fromToDoList.getStringExtra(msg.ctt_Str);
+        imageStr = fromToDoList.getStringExtra(msg.img_Str);
+        if (imageStr != "null") {
+            imageUri = Uri.parse(imageStr);
             imageView.setImageURI(imageUri);
         }
 
-        setTitle(Title);
-        contentView.setText(Content);
+        setTitle(title);
+        contentView.setText(content);
 
         //completeボタンを押した時削除する
         completeBtn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Intent returnToDoView = new Intent(getApplicationContext(),ToDoList.class);
-                returnToDoView.putExtra("check",30);
-
-                startActivity(returnToDoView);
+                GotoToDoList.putExtra(msg.str_Spe_ToDo, msg.Spe_ToDo);
+                GotoToDoList.putExtra(msg.oldTtl, title);
+                startActivity(GotoToDoList);
             }
         });
         //returnボタンを押して画面が閉じる
@@ -66,12 +68,11 @@ public class SpecificActivity extends AppCompatActivity {
         editBtn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Intent GoNewToDo = new Intent(getApplicationContext(),NewToDo.class);
-                GoNewToDo.putExtra("fromSpecific_check",2);
-                GoNewToDo.putExtra("title",Title);
-                GoNewToDo.putExtra("content",Content);
-
-                startActivity(GoNewToDo);
+                GotoNewToDo.putExtra(msg.str_Spe_New, msg.Spe_New);
+                GotoNewToDo.putExtra(msg.ttl_Str, title);
+                GotoNewToDo.putExtra(msg.ctt_Str, content);
+                GotoNewToDo.putExtra(msg.img_Str, imageStr);
+                startActivity(GotoNewToDo);
             }
         });
     }

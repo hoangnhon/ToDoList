@@ -10,10 +10,9 @@ import android.os.Bundle;
 import android.provider.MediaStore;
 import android.view.View;
 import android.widget.Button;
+import android.widget.CheckedTextView;
 import android.widget.EditText;
 import android.widget.ImageView;
-import android.widget.TextView;
-import android.widget.Toast;
 
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 
@@ -24,10 +23,14 @@ public class NewToDo extends AppCompatActivity {
     //クラス変数
     final int CAMERA_RESULT = 100;      //カメラ起動用のリクエストコードを宣言
     Uri imageUri;
+    ImageView imageView;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_new_to_do);
+
+        Message msg = new Message();
 
         //画面上のパーツ宣言
         EditText titleText = findViewById(R.id.titleText);
@@ -37,24 +40,37 @@ public class NewToDo extends AppCompatActivity {
         FloatingActionButton addImageBtn = findViewById(R.id.addImageBtn);
         FloatingActionButton confirmBtn = findViewById(R.id.confirmBtn);
         FloatingActionButton cancelBtn = findViewById(R.id.cancelBtn);
+        imageView = findViewById(R.id.imageView);
 
-        //ToDoListにより画面が立ち上げた場合
+        //呼び元
         Intent fromToDoList = getIntent();
-        int check1 = fromToDoList.getIntExtra("fromToDoList_check",0);
-        if (check1 != 0) {
+        Intent fromSpecific = getIntent();
+        //遷移先
+        Intent GotoToDoList = new Intent(getApplicationContext(),ToDoList.class);
+        //呼び元判別用データを取得する
+        int check_fromToDoList = fromToDoList.getIntExtra(msg.str_ToDo_New,0);
+        int check_fromSpecific = fromSpecific.getIntExtra(msg.str_Spe_New,0);
+        String title,content,imageStr;
+        String oldTitle ="";
+        //ToDoListにより画面が立ち上げた場合
+        if (check_fromToDoList == msg.ToDo_New){
             //titleを変換する
             setTitle("新規作成");
         }
         //specificにより画面が立ち上げた場合
-        Intent fromSpecific = getIntent();
-        int check2 = fromSpecific.getIntExtra("fromSpecific_check",0);
-        if (check2 != 0){
+        else if (check_fromSpecific == msg.Spe_New){
             //titleを変換する
             setTitle("編集");
-            String Title = fromSpecific.getStringExtra("title");
-            String content = fromSpecific.getStringExtra("content");
-            titleText.setText(Title);
+            title = fromSpecific.getStringExtra(msg.ttl_Str);
+            content = fromSpecific.getStringExtra(msg.ctt_Str);
+            imageStr = fromSpecific.getStringExtra(msg.img_Str);
+            oldTitle = title;
+            titleText.setText(title);
             contentText.setText(content);
+            if (imageStr != "null"){
+                imageUri = Uri.parse(imageStr);
+                imageView.setImageURI(imageUri);
+            }
         }
         //タイトルクリアボタンを押すとタイトルボックスの文字が消える
         titleClear.setOnClickListener(new View.OnClickListener() {
@@ -91,20 +107,21 @@ public class NewToDo extends AppCompatActivity {
             }
         });
         //確認ボタンを押すとtodolist画面に戻り、入力したタイトルがtodolist配列に表示する
+        String finalOldTitle = oldTitle;
         confirmBtn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Intent intent_TodoView = new Intent(getApplicationContext(),ToDoList.class);
-                intent_TodoView.putExtra("check",10);
-                intent_TodoView.putExtra("title",titleText.getText().toString());
-                intent_TodoView.putExtra("content",contentText.getText().toString() == null ? "null": contentText.getText().toString());
-                if (imageUri != null){
-                    intent_TodoView.putExtra("imageUri",imageUri.toString());
-                }else {
-                    intent_TodoView.putExtra("imageUri","null");
+                GotoToDoList.putExtra(msg.ttl_Str,titleText.getText().toString().isEmpty() ? "タイトル無し" : titleText.getText().toString());
+                GotoToDoList.putExtra(msg.ctt_Str,contentText.getText().toString());
+                GotoToDoList.putExtra(msg.img_Str,imageUri == null ? "null" : imageUri.toString());
+                if (check_fromToDoList == msg.ToDo_New){
+                    GotoToDoList.putExtra(msg.str_New_ToDo, msg.New_ToDo);
                 }
-
-                startActivity(intent_TodoView);
+                else if (check_fromSpecific == msg.Spe_New){
+                    GotoToDoList.putExtra(msg.when_edited, msg.special);
+                    GotoToDoList.putExtra(msg.oldTtl, finalOldTitle);
+                }
+                startActivity(GotoToDoList);
             }
         });
         //cancelボタンを押した時前の画面に戻る
@@ -121,7 +138,7 @@ public class NewToDo extends AppCompatActivity {
         super.onActivityResult(requestCode,resultCode,data);
         //imageView に画像データをセットする
         if (requestCode == CAMERA_RESULT && resultCode == RESULT_OK){
-            ImageView imageView = findViewById(R.id.imageView);
+            imageView = findViewById(R.id.imageView);
             imageView.setImageURI(imageUri);
         }
     }

@@ -5,12 +5,17 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:background="#f5ecf4"
-    tools:context=".ToDoList">
+    tools:context=".ToDoList"
+    tools:layout_editor_absoluteX="0dp"
+    tools:layout_editor_absoluteY="4dp">
 
     <ListView
         android:id="@+id/todoView"
-        android:layout_width="409dp"
-        android:layout_height="650dp"
+        android:layout_width="0dp"
+        android:layout_height="1150dp"
+        android:layout_marginStart="10dp"
+        android:layout_marginTop="10dp"
+        android:layout_marginEnd="10dp"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
@@ -21,9 +26,8 @@
         android:layout_height="56dp"
         android:layout_marginEnd="15dp"
         android:layout_marginBottom="15dp"
-        android:background="@color/material_dynamic_tertiary90"
         android:clickable="true"
-        app:backgroundTint="#d04f97"
+        app:backgroundTint="@color/purple_500"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:srcCompat="@android:drawable/ic_input_add" />
