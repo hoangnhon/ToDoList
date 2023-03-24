@@ -10,7 +10,6 @@ import android.os.Bundle;
 import android.provider.MediaStore;
 import android.view.View;
 import android.widget.Button;
-import android.widget.CheckedTextView;
 import android.widget.EditText;
 import android.widget.ImageView;
 
@@ -73,64 +72,45 @@ public class NewToDo extends AppCompatActivity {
             }
         }
         //タイトルクリアボタンを押すとタイトルボックスの文字が消える
-        titleClear.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                titleText.setText("");
-            }
-        });
+        titleClear.setOnClickListener(v -> titleText.setText(""));
         //内容クリアボタンを押すと内容ボックスのが消える
-        contentClear.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                contentText.setText("");
-            }
-        });
+        contentClear.setOnClickListener(v -> contentText.setText(""));
         //画像追加ボタンを押すとカメラが起動される
-        addImageBtn.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                Intent GoCamera = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
-                //ユニックな画像ファイル名を生成する
-                String timestamp = new SimpleDateFormat("yyyyMMdd_HHmmss").format(new Date());
-                String filename = "Image" + timestamp + "_.jpg";
-                //画像ファイル設定に必要なパラメータを設定する
-                ContentValues values = new ContentValues();
-                values.put(MediaStore.Images.Media.TITLE,filename);
-                values.put(MediaStore.Images.Media.MIME_TYPE,"image/jpeg");
-                //保存画像情報のURIを生成
-                imageUri = getContentResolver().insert(MediaStore.Images.Media.EXTERNAL_CONTENT_URI,values);
-                //カメラ起動のintent にパラメータをセットする
-                GoCamera.putExtra(MediaStore.EXTRA_OUTPUT,imageUri);
+        addImageBtn.setOnClickListener(v -> {
+            Intent GoCamera = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
+            //ユニックな画像ファイル名を生成する
+            String timestamp = new SimpleDateFormat("yyyyMMdd_HHmmss").format(new Date());
+            String filename = "Image" + timestamp + "_.jpg";
+            //画像ファイル設定に必要なパラメータを設定する
+            ContentValues values = new ContentValues();
+            values.put(MediaStore.Images.Media.TITLE,filename);
+            values.put(MediaStore.Images.Media.MIME_TYPE,"image/jpeg");
+            //保存画像情報のURIを生成
+            imageUri = getContentResolver().insert(MediaStore.Images.Media.EXTERNAL_CONTENT_URI,values);
+            //カメラ起動のintent にパラメータをセットする
+            GoCamera.putExtra(MediaStore.EXTRA_OUTPUT,imageUri);
 
-                startActivityForResult(GoCamera,CAMERA_RESULT);
-            }
+            startActivityForResult(GoCamera,CAMERA_RESULT);
         });
+        //addImageBtnを長押しで画像を削除する
+        addImageBtn.setOnLongClickListener(v -> false);
         //確認ボタンを押すとtodolist画面に戻り、入力したタイトルがtodolist配列に表示する
         String finalOldTitle = oldTitle;
-        confirmBtn.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                GotoToDoList.putExtra(msg.ttl_Str,titleText.getText().toString().isEmpty() ? "タイトル無し" : titleText.getText().toString());
-                GotoToDoList.putExtra(msg.ctt_Str,contentText.getText().toString());
-                GotoToDoList.putExtra(msg.img_Str,imageUri == null ? "null" : imageUri.toString());
-                if (check_fromToDoList == msg.ToDo_New){
-                    GotoToDoList.putExtra(msg.str_New_ToDo, msg.New_ToDo);
-                }
-                else if (check_fromSpecific == msg.Spe_New){
-                    GotoToDoList.putExtra(msg.when_edited, msg.special);
-                    GotoToDoList.putExtra(msg.oldTtl, finalOldTitle);
-                }
-                startActivity(GotoToDoList);
+        confirmBtn.setOnClickListener(v -> {
+            GotoToDoList.putExtra(msg.ttl_Str,titleText.getText().toString().isEmpty() ? "タイトル無し" : titleText.getText().toString());
+            GotoToDoList.putExtra(msg.ctt_Str,contentText.getText().toString());
+            GotoToDoList.putExtra(msg.img_Str,imageUri == null ? "null" : imageUri.toString());
+            if (check_fromToDoList == msg.ToDo_New){
+                GotoToDoList.putExtra(msg.str_New_ToDo, msg.New_ToDo);
             }
+            else if (check_fromSpecific == msg.Spe_New){
+                GotoToDoList.putExtra(msg.when_edited, msg.special);
+                GotoToDoList.putExtra(msg.oldTtl, finalOldTitle);
+            }
+            startActivity(GotoToDoList);
         });
         //cancelボタンを押した時前の画面に戻る
-        cancelBtn.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                finish();
-            }
-        });
+        cancelBtn.setOnClickListener(v -> finish());
     }
     @Override
     //撮った写真が画面に表示する
