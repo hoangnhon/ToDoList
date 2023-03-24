@@ -21,7 +21,7 @@ public class ToDoList extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_to_do_list);
 
-        ArrayList<String> TitleList = new ArrayList<>();
+        ArrayList<String>   TitleList = new ArrayList<>();
         ArrayList<String> Content_List = new ArrayList<>();
         ArrayList<String> Image_List = new ArrayList<>();
 

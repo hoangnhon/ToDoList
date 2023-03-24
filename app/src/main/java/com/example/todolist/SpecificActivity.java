@@ -48,32 +48,21 @@ public class SpecificActivity extends AppCompatActivity {
         contentView.setText(content);
 
         //completeボタンを押した時削除する
-        completeBtn.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                GotoToDoList.putExtra(msg.str_Spe_ToDo, msg.Spe_ToDo);
-                GotoToDoList.putExtra(msg.oldTtl, title);
-                startActivity(GotoToDoList);
-            }
+        completeBtn.setOnClickListener(v -> {
+            GotoToDoList.putExtra(msg.str_Spe_ToDo, msg.Spe_ToDo);
+            GotoToDoList.putExtra(msg.oldTtl, title);
+            startActivity(GotoToDoList);
         });
         //returnボタンを押して画面が閉じる
-        returnBtn.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                finish();
-            }
-        });
+        returnBtn.setOnClickListener(v -> finish());
 
         //editボタンを押した時、内容を修正する画面に移動
-        editBtn.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                GotoNewToDo.putExtra(msg.str_Spe_New, msg.Spe_New);
-                GotoNewToDo.putExtra(msg.ttl_Str, title);
-                GotoNewToDo.putExtra(msg.ctt_Str, content);
-                GotoNewToDo.putExtra(msg.img_Str, imageStr);
-                startActivity(GotoNewToDo);
-            }
+        editBtn.setOnClickListener(v -> {
+            GotoNewToDo.putExtra(msg.str_Spe_New, msg.Spe_New);
+            GotoNewToDo.putExtra(msg.ttl_Str, title);
+            GotoNewToDo.putExtra(msg.ctt_Str, content);
+            GotoNewToDo.putExtra(msg.img_Str, imageStr);
+            startActivity(GotoNewToDo);
         });
     }
 }
